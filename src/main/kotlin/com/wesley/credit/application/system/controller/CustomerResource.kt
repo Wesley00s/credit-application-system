@@ -4,7 +4,6 @@ import com.wesley.credit.application.system.dto.CustomerDto
 import com.wesley.credit.application.system.dto.CustomerUpdateDto
 import com.wesley.credit.application.system.dto.CustomerView
 import com.wesley.credit.application.system.service.implement.CustomerService
-import jakarta.validation.Valid
 import org.hibernate.sql.Update
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -27,7 +25,7 @@ class CustomerResource(
 ) {
 
     @PostMapping
-    fun saveCustomer(@RequestBody @Valid customerDto : CustomerDto): ResponseEntity<String> {
+    fun saveCustomer(@RequestBody customerDto : CustomerDto): ResponseEntity<String> {
         val savedCustomer = this.customerService.save(customerDto.toEntity())
         return ResponseEntity.status(HttpStatus.CREATED).body("Customer ${savedCustomer.email} saved!")
     }
@@ -39,14 +37,10 @@ class CustomerResource(
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     fun deleteCustomer(@PathVariable id: Long) = this.customerService.delete(id)
 
     @PatchMapping
-    fun updateCustomer(
-        @RequestParam(value = "customerId") id : Long,
-        @RequestBody @Valid customerUpdateDto: CustomerUpdateDto
-    ) : ResponseEntity<CustomerView> {
+    fun updateCustomer(@RequestParam(value = "customerId") id : Long, @RequestBody customerUpdateDto: CustomerUpdateDto) : ResponseEntity<CustomerView> {
         val customer = this.customerService.findById(id)
         val customerToUpdate = customerUpdateDto.toEntity(customer)
         val customerUpdated = this.customerService.save(customerToUpdate)
