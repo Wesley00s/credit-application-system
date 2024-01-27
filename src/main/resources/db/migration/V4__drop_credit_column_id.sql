@@ -1,0 +1,2 @@
+ALTER TABLE credit
+    DROP COLUMN id;
